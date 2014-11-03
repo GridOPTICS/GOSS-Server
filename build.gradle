@@ -1,20 +1,33 @@
 apply plugin: "java"
 apply plugin: "groovy"
 apply plugin: "maven"
+apply plugin: "eclipse"
+apply plugin:'application'
 
 sourceCompatibility = '1.7'
+
+group = 'pnnl.goss.server'
+version = '0.1.6-SNAPSHOT'
+
+// Property added by application plugin
+mainClassName = "pnnl.goss.server.ServerMain"
 
 // Configure the project.ext variables.  I am using version numbers
 // here so that they can be in one spot, all together rather than in the
 // dependencies configuration block.
 ext {
+	activemqVersion = '5.10.0'
     gossCoreVersion = '0.1.6-SNAPSHOT'
     gradleVersion = '2.1'
     groovyVersion = '2.3.3'
-    slf4jVersion = '1.7.5'
+	ipojoVersion = '1.11.2'
+	jettyVersion = '8.1.14.v20131031'
     junitVersion = '4.11'
     mockitoVersion = '1.10.8'
+    slf4jVersion = '1.7.5'
     spockVersion = '0.7-groovy-2.0'
+    springBeansVersion = '3.1.2.RELEASE'
+	xbeanSpringVersion = '3.8'
 }
 
 // Repository configuration.
@@ -26,25 +39,61 @@ repositories {
 
 
 dependencies {
+	
     compile "org.codehaus.groovy:groovy-all:$groovyVersion"
+	//compile (group: "com.esyfur", name: "gradle-config-plugin", version: "$gradleConfigVersion")
     
+	compile "org.eclipse.jetty.aggregate:jetty-all-server:$jettyVersion"
+	compile "org.apache.activemq:activemq-all:$activemqVersion"
+	compile "org.springframework:spring-beans:$springBeansVersion"
+	compile "org.springframework:spring-context:$springBeansVersion"
+	compile "org.apache.xbean:xbean-spring:$xbeanSpringVersion"
+	
     // Logging should be available to all projects
     compile "org.slf4j:slf4j-api:$slf4jVersion"
     compile "org.slf4j:slf4j-log4j12:$slf4jVersion"
     
     // Both client and server need access to the following dependencies
     compile "pnnl.goss:goss-core:$gossCoreVersion"
-    
+	compile "pnnl.goss:goss-core-server:$gossCoreVersion"
+	compile "org.apache.felix:org.apache.felix.ipojo:$ipojoVersion"
+	
     // For testing we are going to use these ubiquitous
     testCompile "junit:junit:$junitVersion"
-    testCompile "org.mockito:mockito-core:1.10.8"
-    testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
+    testCompile "org.spockframework:spock-core:$spockVersion"
     
 }
 
+buildscript {
+	def gradleConfigVersion = '0.4.7'
+	
+	repositories {
+		mavenCentral()
+	}
+	
+	dependencies {
+		classpath group: "com.esyfur", name: "gradle-config-plugin", version: "$gradleConfigVersion"
+	}
+}
+
+apply plugin: 'config'
+cfgutil.load('goss.properties')
 // This task is for creating a wrap script that can simply be
 // downloaded and executed.  The doing of this remindes me
 // allot of virtualenv for python.
 task wrapper (type: Wrapper) {
 	gradleVersion = "$gradleVersion"
+}
+
+//apply from: 'goss.properties'
+//apply plugin: 'config'
+task printProps << {
+	println config.activemq.host
+	//println activemq.host
+//	 commandLineProjectProp
+//	println gradlePropertiesProp
+//	println systemProjectProp
+//	println envProjectProp
+//	println System.properties['system']
 }
