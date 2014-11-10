@@ -48,38 +48,13 @@ import static pnnl.goss.core.GossCoreContants.PROP_CORE_CONFIG;
 import static pnnl.goss.core.GossCoreContants.PROP_DATASOURCES_CONFIG;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.type.filter.AnnotationTypeFilter;
 
-
-
-
-
-
-
-import eu.infomas.annotation.AnnotationDetector;
-import eu.infomas.annotation.AnnotationDetector.TypeReporter;
-//import pnnl.goss.fusiondb.FusionDBServerActivator;
-//import pnnl.goss.fusiondb.launchers.DataStreamLauncher;
-//import pnnl.goss.gridmw.GridMWServerActivator;
-//import pnnl.goss.gridpack.service.GridpackServerActivator;
-//import pnnl.goss.kairosdb.KairosDBServerActivator;
-//import pnnl.goss.mdart.MDARTServerActivator;
-//import pnnl.goss.powergrid.server.PowergridServerActivator;
 import pnnl.goss.core.server.GossDataServices;
-import pnnl.goss.core.server.annotations.RequestHandler;
 import pnnl.goss.core.server.internal.GossDataServicesImpl;
 import pnnl.goss.core.server.internal.GossRequestHandlerRegistrationImpl;
 import pnnl.goss.core.server.internal.GridOpticsServer;
