@@ -26,8 +26,7 @@ ext {
     mockitoVersion = '1.10.8'
     slf4jVersion = '1.7.5'
     spockVersion = '0.7-groovy-2.0'
-    springBeansVersion = '3.1.2.RELEASE'
-	xbeanSpringVersion = '3.8'
+    springVersion = '3.1.2.RELEASE'
 }
 
 // Repository configuration.
@@ -45,11 +44,11 @@ dependencies {
     
 	compile "org.eclipse.jetty.aggregate:jetty-all-server:$jettyVersion"
 	compile "org.apache.activemq:activemq-all:$activemqVersion"
-	compile "org.springframework:spring-beans:$springBeansVersion"
-	compile "org.springframework:spring-context:$springBeansVersion"
+	compile "org.springframework:spring-beans:$springVersion"
+	compile "org.springframework:spring-context:$springVersion"
 	compile "org.apache.xbean:xbean-spring:$xbeanSpringVersion"
 	
-    // Logging should be available to all projects
+	// Logging should be available to all projects
     compile "org.slf4j:slf4j-api:$slf4jVersion"
     compile "org.slf4j:slf4j-log4j12:$slf4jVersion"
     
@@ -79,6 +78,7 @@ buildscript {
 
 apply plugin: 'config'
 cfgutil.load('goss.properties')
+cfgutil.load('pnnl.goss.core.cfg')
 // This task is for creating a wrap script that can simply be
 // downloaded and executed.  The doing of this remindes me
 // allot of virtualenv for python.
