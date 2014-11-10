@@ -16,8 +16,10 @@ mainClassName = "pnnl.goss.server.ServerMain"
 // here so that they can be in one spot, all together rather than in the
 // dependencies configuration block.
 ext {
+	gossCoreVersion = '0.1.6-SNAPSHOT'
+	gossPowergridVersion = '0.1.6-SNAPSHOT'
+	
 	activemqVersion = '5.10.0'
-    gossCoreVersion = '0.1.6-SNAPSHOT'
     gradleVersion = '2.1'
     groovyVersion = '2.3.3'
 	ipojoVersion = '1.11.2'
@@ -27,6 +29,7 @@ ext {
     slf4jVersion = '1.7.5'
     spockVersion = '0.7-groovy-2.0'
     springVersion = '3.1.2.RELEASE'
+	xbeanVersion = "3.8"
 }
 
 // Repository configuration.
@@ -46,7 +49,6 @@ dependencies {
 	compile "org.apache.activemq:activemq-all:$activemqVersion"
 	compile "org.springframework:spring-beans:$springVersion"
 	compile "org.springframework:spring-context:$springVersion"
-	compile "org.apache.xbean:xbean-spring:$xbeanSpringVersion"
 	
 	// Logging should be available to all projects
     compile "org.slf4j:slf4j-api:$slf4jVersion"
@@ -55,8 +57,11 @@ dependencies {
     // Both client and server need access to the following dependencies
     compile "pnnl.goss:goss-core:$gossCoreVersion"
 	compile "pnnl.goss:goss-core-server:$gossCoreVersion"
+	compile "pnnl.goss.powergrid:powergrid-common:$gossPowergridVersion"
+	compile "pnnl.goss.powergrid:powergrid-server:$gossPowergridVersion"
 	compile "org.apache.felix:org.apache.felix.ipojo:$ipojoVersion"
-	
+	compile "org.apache.xbean:xbean-spring:$xbeanVersion"
+		
     // For testing we are going to use these ubiquitous
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
@@ -76,9 +81,11 @@ buildscript {
 	}
 }
 
-apply plugin: 'config'
-cfgutil.load('goss.properties')
-cfgutil.load('pnnl.goss.core.cfg')
+//apply plugin: 'config'
+//cfgutil.load('goss.properties')
+//cfgutil.load('bin/pnnl.goss.core.cfg')
+
+
 // This task is for creating a wrap script that can simply be
 // downloaded and executed.  The doing of this remindes me
 // allot of virtualenv for python.
