@@ -163,26 +163,6 @@ public class ServerMain {
 		registrationService.setCoreServerConfig(coreConfig);
 		registrationService.addHandlersFromClassPath();
 
-//		final List<URL> urls = new ArrayList<>();
-//		ClassFinder.findClasses(new Visitor<String>() {
-//			
-//			@Override
-//			public boolean visit(String t) {
-//				System.err.println(t);
-//				if (!t.startsWith("java") && !t.startsWith("sun")){
-//					try {
-//						urls.add(new URL(t));
-//					} catch (MalformedURLException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//					return false;
-//				}
-//				// TODO Auto-generated method stub
-//				return false;
-//			}
-//		});
-		
 		@SuppressWarnings("unused")
 		GridOpticsServer server = new GridOpticsServer(registrationService, true);
 			
