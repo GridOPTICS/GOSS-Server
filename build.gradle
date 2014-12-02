@@ -16,20 +16,22 @@ mainClassName = "pnnl.goss.server.ServerMain"
 // here so that they can be in one spot, all together rather than in the
 // dependencies configuration block.
 ext {
-	gossCoreVersion = '0.1.6-SNAPSHOT'
-	gossPowergridVersion = '0.1.6-SNAPSHOT'
-	
-	activemqVersion = '5.10.0'
+    commonsCliVersion = "1.2"
+
+    gossCoreVersion = '0.1.6-SNAPSHOT'
+    gossPowergridVersion = '0.1.6-SNAPSHOT'
+
+    activemqVersion = '5.10.0'
     gradleVersion = '2.1'
     groovyVersion = '2.3.3'
-	ipojoVersion = '1.11.2'
-	jettyVersion = '8.1.14.v20131031'
+    ipojoVersion = '1.11.2'
+    jettyVersion = '8.1.14.v20131031'
     junitVersion = '4.11'
     mockitoVersion = '1.10.8'
     slf4jVersion = '1.7.5'
     spockVersion = '0.7-groovy-2.0'
     springVersion = '3.1.2.RELEASE'
-	xbeanVersion = "3.8"
+    xbeanVersion = "3.8"
 }
 
 // Repository configuration.
@@ -41,44 +43,44 @@ repositories {
 
 
 dependencies {
-	
+
+    compile "commons-cli:commons-cli:$commonsCliVersion"
+
     compile "org.codehaus.groovy:groovy-all:$groovyVersion"
-	//compile (group: "com.esyfur", name: "gradle-config-plugin", version: "$gradleConfigVersion")
-    
-	compile "org.eclipse.jetty.aggregate:jetty-all-server:$jettyVersion"
-	compile "org.apache.activemq:activemq-all:$activemqVersion"
-	compile "org.springframework:spring-beans:$springVersion"
-	compile "org.springframework:spring-context:$springVersion"
-	
-	// Logging should be available to all projects
+    //compile (group: "com.esyfur", name: "gradle-config-plugin", version: "$gradleConfigVersion")
+
+    compile "org.eclipse.jetty.aggregate:jetty-all-server:$jettyVersion"
+    compile "org.apache.activemq:activemq-all:$activemqVersion"
+    compile "org.springframework:spring-beans:$springVersion"
+    compile "org.springframework:spring-context:$springVersion"
+
+    // Logging should be available to all projects
     compile "org.slf4j:slf4j-api:$slf4jVersion"
     compile "org.slf4j:slf4j-log4j12:$slf4jVersion"
-    
+
     // Both client and server need access to the following dependencies
     compile "pnnl.goss:goss-core:$gossCoreVersion"
-	compile "pnnl.goss:goss-core-server:$gossCoreVersion"
-	compile "pnnl.goss.powergrid:powergrid-common:$gossPowergridVersion"
-	compile "pnnl.goss.powergrid:powergrid-server:$gossPowergridVersion"
-	compile "org.apache.felix:org.apache.felix.ipojo:$ipojoVersion"
-	compile "org.apache.xbean:xbean-spring:$xbeanVersion"
-		
+    compile "pnnl.goss:goss-core-server:$gossCoreVersion"
+    compile "pnnl.goss.powergrid:powergrid-common:$gossPowergridVersion"
+    compile "pnnl.goss.powergrid:powergrid-server:$gossPowergridVersion"
+    compile "org.apache.felix:org.apache.felix.ipojo:$ipojoVersion"
+    compile "org.apache.xbean:xbean-spring:$xbeanVersion"
+
     // For testing we are going to use these ubiquitous
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
     testCompile "org.spockframework:spock-core:$spockVersion"
-    
+
 }
 
 buildscript {
-	def gradleConfigVersion = '0.4.7'
-	
-	repositories {
-		mavenCentral()
-	}
-	
-	dependencies {
-		classpath group: "com.esyfur", name: "gradle-config-plugin", version: "$gradleConfigVersion"
-	}
+    def gradleConfigVersion = '0.4.7'
+
+    repositories { mavenCentral() }
+
+    dependencies {
+        classpath group: "com.esyfur", name: "gradle-config-plugin", version: "$gradleConfigVersion"
+    }
 }
 
 //apply plugin: 'config'
@@ -89,18 +91,16 @@ buildscript {
 // This task is for creating a wrap script that can simply be
 // downloaded and executed.  The doing of this remindes me
 // allot of virtualenv for python.
-task wrapper (type: Wrapper) {
-	gradleVersion = "$gradleVersion"
-}
+task wrapper (type: Wrapper) { gradleVersion = "$gradleVersion" }
 
 //apply from: 'goss.properties'
 //apply plugin: 'config'
 task printProps << {
-	println config.activemq.host
-	//println activemq.host
-//	 commandLineProjectProp
-//	println gradlePropertiesProp
-//	println systemProjectProp
-//	println envProjectProp
-//	println System.properties['system']
+    println config.activemq.host
+    //println activemq.host
+    //	 commandLineProjectProp
+    //	println gradlePropertiesProp
+    //	println systemProjectProp
+    //	println envProjectProp
+    //	println System.properties['system']
 }
