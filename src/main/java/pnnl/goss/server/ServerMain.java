@@ -44,16 +44,23 @@
 */
 package pnnl.goss.server;
 
-import static pnnl.goss.core.GossCoreContants.PROP_CORE_CONFIG;
-import static pnnl.goss.core.GossCoreContants.PROP_DATASOURCES_CONFIG;
-
 import java.io.File;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.Properties;
 
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.MissingOptionException;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.Parser;
+import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.UnrecognizedOptionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +72,10 @@ import pnnl.goss.util.Utilities;
 
 
 public class ServerMain {
-
+	private static String CMD_DATACFG = "datacfg";
+	private static String CMD_ACTIVEMQ = "activemqcfg";
+	private static String CMD_CORECFG = "coreCfg";
+	
     private static Logger log = LoggerFactory.getLogger(ServerMain.class);
 
     public void attachShutdownHook(){
@@ -120,56 +130,102 @@ public class ServerMain {
 
         Options options = new Options();
 
-        options.addOption(OptionBuilder.withArgName("datacfg")
-                .isRequired(true)
+        options.addOption(OptionBuilder.withArgName("help")
+        		.withDescription("Prints this message.")
+        		.create("help"));
+
+        
+        options.addOption(OptionBuilder.withArgName("datacfg") 
+        		.hasArg()
                 .withDescription( "Specifies the datasource configuration file.")
-                .create("datacfgfile"));
+                .create(CMD_DATACFG));
 
         options.addOption(OptionBuilder.withArgName("broker")
-                .isRequired(false)
+                .hasArg()
                 .withDescription("An activemq broker configuration file.")
-                .create("activemqCfg"));
+                .create(CMD_ACTIVEMQ));
 
-        options.addOption(OptionBuilder.withArgName("core")
-                .isRequired(true)
+        options.addOption(OptionBuilder.withArgName("corecfg")                
+                .hasArg()
                 .withDescription("Specifies core configuration parameters.")
-                .create("coreCfg"));
-
+                .create(CMD_CORECFG));
+        
+        
 
         return options;
     }
 
     @SuppressWarnings("rawtypes")
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
 
         ServerMain serverMain = new ServerMain();
         Options options = serverMain.buildOptions();
+        String brokerFile = null;
+        String coreFile = null;
+        String datasourceFile = null;
 
-        serverMain.attachShutdownHook();
+        //CommandLineParser parser = new PosixParser().parse(options,args);
+        CommandLine cmd = null;
+        try{
+        	cmd = new PosixParser().parse(options, args); //parser.parse(options, args,true);
+        	
+        	if (cmd.hasOption("help")){
+        		HelpFormatter formatter = new HelpFormatter();
+        		formatter.printHelp( "ant", options );
+        		return;
+        	}
+        	
+        	if (!cmd.hasOption(CMD_CORECFG)) {
+        		Option ops = options.getOption(CMD_CORECFG);
+        		System.err.println("Required "+ ops.getArgName());
+        		return;        				
+        	}
+        	
+        	coreFile = cmd.getOptionValue(CMD_CORECFG);
+        	
+        	if (cmd.hasOption(CMD_ACTIVEMQ)){
+        		brokerFile = cmd.getOptionValue(CMD_ACTIVEMQ);
+        	}
+        	
+        	if (cmd.hasOption(CMD_DATACFG)){
+        		datasourceFile = cmd.getOptionValue(CMD_DATACFG);
+        	}
+        	
+        }
+    	catch( ParseException exp ) {
+    	    System.err.println( "Unexpected exception: " + exp.getMessage() );
+    	    return;
+    	}
+        
+        
+        
+        
+        //serverMain.attachShutdownHook();
+
+        
 
 
+//        Dictionary dataSourcesConfig = Utilities.loadProperties(PROP_DATASOURCES_CONFIG);
+//        // Replaces the ${..} with values from the goss.properties file.
+//        replacePropertiesFromHome(dataSourcesConfig, "goss.properties");
+//
+//        Dictionary coreConfig = Utilities.loadProperties(PROP_CORE_CONFIG);
 
-        Dictionary dataSourcesConfig = Utilities.loadProperties(PROP_DATASOURCES_CONFIG);
-        // Replaces the ${..} with values from the goss.properties file.
-        replacePropertiesFromHome(dataSourcesConfig, "goss.properties");
-
-        Dictionary coreConfig = Utilities.loadProperties(PROP_CORE_CONFIG);
-
-        log.debug("CORE CONFIGURATION");
-        outputConfig(coreConfig);
-
-        log.debug("DATASOURCES CONFIGURATION");
-        outputConfig(dataSourcesConfig);
-
-        // Pass the datasourcesconfig to the constructor so that it is available.
-        GossDataServices dataServices = new GossDataServicesImpl(dataSourcesConfig);
-
-        GossRequestHandlerRegistrationImpl registrationService = new GossRequestHandlerRegistrationImpl(dataServices);
-        registrationService.setCoreServerConfig(coreConfig);
-        registrationService.addHandlersFromClassPath();
-
-        @SuppressWarnings("unused")
-        GridOpticsServer server = new GridOpticsServer(registrationService, true);
+//        log.debug("CORE CONFIGURATION");
+//        outputConfig(coreConfig);
+//
+//        log.debug("DATASOURCES CONFIGURATION");
+//        outputConfig(dataSourcesConfig);
+//
+//        // Pass the datasourcesconfig to the constructor so that it is available.
+//        GossDataServices dataServices = new GossDataServicesImpl(dataSourcesConfig);
+//
+//        GossRequestHandlerRegistrationImpl registrationService = new GossRequestHandlerRegistrationImpl(dataServices);
+//        registrationService.setCoreServerConfig(coreConfig);
+//        registrationService.addHandlersFromClassPath();
+//
+//        @SuppressWarnings("unused")
+//        GridOpticsServer server = new GridOpticsServer(registrationService, true);
 
 
 
