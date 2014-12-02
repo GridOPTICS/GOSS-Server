@@ -70,6 +70,7 @@ import org.slf4j.LoggerFactory;
 
 import pnnl.goss.core.GossCoreContants;
 import pnnl.goss.core.server.GossDataServices;
+import pnnl.goss.core.server.internal.BasicDataSourceCreatorImpl;
 import pnnl.goss.core.server.internal.GossDataServicesImpl;
 import pnnl.goss.core.server.internal.GossRequestHandlerRegistrationImpl;
 import pnnl.goss.core.server.internal.GridOpticsServer;
@@ -77,10 +78,10 @@ import pnnl.goss.util.Utilities;
 
 
 public class ServerMain {
-	private static String CMD_DATACFG = "datacfg";
-	private static String CMD_ACTIVEMQ = "activemqcfg";
-	private static String CMD_CORECFG = "coreCfg";
-	
+    private static String CMD_DATACFG = "dataCfg";
+    private static String CMD_ACTIVEMQ = "activemqCfg";
+    private static String CMD_CORECFG = "coreCfg";
+
     private static Logger log = LoggerFactory.getLogger(ServerMain.class);
 
     public void attachShutdownHook(){
@@ -104,9 +105,9 @@ public class ServerMain {
             log.debug("\t"+element+" => "+ dictionary.get(element));
             hasOne = true;
         }
-        
+
         if (!hasOne){
-        	log.debug("\tNo config elements present");
+            log.debug("\tNo config elements present");
         }
     }
 
@@ -142,12 +143,12 @@ public class ServerMain {
         Options options = new Options();
 
         options.addOption(OptionBuilder.withArgName("help")
-        		.withDescription("Prints this message.")
-        		.create("help"));
+                .withDescription("Prints this message.")
+                .create("help"));
 
-        
-        options.addOption(OptionBuilder.withArgName("datacfg") 
-        		.hasArg()
+
+        options.addOption(OptionBuilder.withArgName("datacfg")
+                .hasArg()
                 .withDescription( "Specifies the datasource configuration file.")
                 .create(CMD_DATACFG));
 
@@ -156,35 +157,35 @@ public class ServerMain {
                 .withDescription("An activemq broker configuration file.")
                 .create(CMD_ACTIVEMQ));
 
-        options.addOption(OptionBuilder.withArgName("corecfg")                
+        options.addOption(OptionBuilder.withArgName("corecfg")
                 .hasArg()
                 .withDescription("Specifies core configuration parameters.")
                 .create(CMD_CORECFG));
-        
-        
+
+
 
         return options;
     }
-    
+
     @SuppressWarnings("rawtypes")
-	public Dictionary loadProperties(String fileName) {
-    	if (fileName == null){
-    		return null;
-    	}
-    	
-    	boolean exceptionHandled = false;
-    	File file = new File(fileName);
-    	Dictionary dict = new Hashtable();
-    	Properties props = new Properties();
-    	try {
-			props.load(new FileInputStream(file));
-		} catch (IOException e) {
-			exceptionHandled = true;
-		}
-    	if (exceptionHandled){
-    		return null;
-    	}
-     	return props;    	
+    public Dictionary loadProperties(String fileName) {
+        if (fileName == null){
+            return null;
+        }
+
+        boolean exceptionHandled = false;
+        File file = new File(fileName);
+        Dictionary dict = new Hashtable();
+        Properties props = new Properties();
+        try {
+            props.load(new FileInputStream(file));
+        } catch (IOException e) {
+            exceptionHandled = true;
+        }
+        if (exceptionHandled){
+            return null;
+        }
+         return props;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -200,88 +201,93 @@ public class ServerMain {
         //CommandLineParser parser = new PosixParser().parse(options,args);
         CommandLine cmd = null;
         try{
-        	cmd = new PosixParser().parse(options, args); //parser.parse(options, args,true);
-        	
-        	if (cmd.hasOption("help")){
-        		HelpFormatter formatter = new HelpFormatter();
-        		formatter.printHelp( "ant", options );
-        		return;
-        	}
-        	
-        	if (!cmd.hasOption(CMD_CORECFG)) {
-        		Option ops = options.getOption(CMD_CORECFG);
-        		System.err.println("Required "+ ops.getArgName());
-        		return;        				
-        	}
-        	
-        	coreFile = cmd.getOptionValue(CMD_CORECFG);
-        	
-        	if (cmd.hasOption(CMD_ACTIVEMQ)){
-        		brokerFile = cmd.getOptionValue(CMD_ACTIVEMQ);
-        	}
-        	
-        	if (cmd.hasOption(CMD_DATACFG)){
-        		datasourceFile = cmd.getOptionValue(CMD_DATACFG);
-        	}
-        	
+            cmd = new PosixParser().parse(options, args); //parser.parse(options, args,true);
+
+            if (cmd.hasOption("help")){
+                HelpFormatter formatter = new HelpFormatter();
+                formatter.printHelp( "ant", options );
+                return;
+            }
+
+            if (!cmd.hasOption(CMD_CORECFG)) {
+                Option ops = options.getOption(CMD_CORECFG);
+                System.err.println("Required "+ ops.getArgName());
+                return;
+            }
+
+            coreFile = cmd.getOptionValue(CMD_CORECFG);
+
+            if (cmd.hasOption(CMD_ACTIVEMQ)){
+                brokerFile = cmd.getOptionValue(CMD_ACTIVEMQ);
+            }
+
+            if (cmd.hasOption(CMD_DATACFG)){
+                datasourceFile = cmd.getOptionValue(CMD_DATACFG);
+            }
+
         }
-    	catch( ParseException exp ) {
-    	    System.err.println( "Unexpected exception: " + exp.getMessage() );
-    	    return;
-    	}
-        
+        catch( ParseException exp ) {
+            System.err.println( "Unexpected exception: " + exp.getMessage() );
+            return;
+        }
+
         Option ops = null;
-    	Dictionary dataSourcesCfg = serverMain.loadProperties(datasourceFile);
+        Dictionary dataSourcesCfg = serverMain.loadProperties(datasourceFile);
         if (dataSourcesCfg == null){
-        	dataSourcesCfg = new Hashtable();
+            dataSourcesCfg = new Hashtable();
         }
-        
-        
+
+
         Dictionary coreConfig = serverMain.loadProperties(coreFile);
         if (coreConfig == null){
-        	ops = options.getOption(CMD_CORECFG);
-        	log.error("Invalid "+ops.getArgName() + " path\n\t"+
-					coreFile);
-        	return;
+            ops = options.getOption(CMD_CORECFG);
+            log.error("Invalid "+ops.getArgName() + " path\n\t"+
+                    coreFile);
+            return;
         }
-        
+
         if (brokerFile != null){
-        	File bf = new File(brokerFile);
-        	if (!bf.exists()){
-        		ops = options.getOption(CMD_ACTIVEMQ);
-        		log.error("Invalid "+ops.getArgName() + " path\n\t"+
-            			brokerFile);
-            	return;
-        	}
+            File bf = new File(brokerFile);
+            if (!bf.exists()){
+                ops = options.getOption(CMD_ACTIVEMQ);
+                log.error("Invalid "+ops.getArgName() + " path\n\t"+
+                        brokerFile);
+                return;
+            }
         }
-        
+
         serverMain.attachShutdownHook();
-        
+
         log.debug("CORE CONFIGURATION");
         outputConfig(coreConfig);
-        
+
         log.debug("DATASOURCES CONFIGURATION");
         outputConfig(dataSourcesCfg);
-        
-        GossDataServices dataServices = new GossDataServicesImpl(dataSourcesCfg);
-        GossRequestHandlerRegistrationImpl registrationService = new GossRequestHandlerRegistrationImpl(dataServices);
-        
+
+        GossDataServices dataServices = new GossDataServicesImpl(
+                new BasicDataSourceCreatorImpl(), dataSourcesCfg);
+        GossRequestHandlerRegistrationImpl registrationService =
+                new GossRequestHandlerRegistrationImpl(dataServices);
+
         registrationService.addHandlersFromClassPath();
-        
+
         if (brokerFile != null){
-        	coreConfig.put(GossCoreContants.PROP_ACTIVEMQ_CONFIG, brokerFile);
-        	startBroker = true;
+            log.debug("BROKER FILE: "+ brokerFile);
+            //log.debug("REPLACED: " + brokerFile.replaceAll("\\\\", "/"));
+            coreConfig.put(GossCoreContants.PROP_ACTIVEMQ_CONFIG,
+                    brokerFile.replaceAll("\\\\", "/"));
+            startBroker = true;
         }
-        
-        GridOpticsServer server = new GridOpticsServer(registrationService, 
-        		coreConfig, startBroker);
+
+        GridOpticsServer server = new GridOpticsServer(registrationService,
+                coreConfig, startBroker);
 
 //        Dictionary dataSourcesConfig = Utilities.loadProperties(PROP_DATASOURCES_CONFIG);
 //        // Replaces the ${..} with values from the goss.properties file.
 //        replacePropertiesFromHome(dataSourcesConfig, "goss.properties");
 //
 //        Dictionary coreConfig = Utilities.loadProperties(PROP_CORE_CONFIG);
-        
+
 
 //        log.debug("CORE CONFIGURATION");
 //        outputConfig(coreConfig);
