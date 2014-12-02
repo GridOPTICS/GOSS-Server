@@ -45,8 +45,12 @@
 package pnnl.goss.server;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Properties;
 
 import org.apache.commons.cli.BasicParser;
@@ -64,6 +68,7 @@ import org.apache.commons.cli.UnrecognizedOptionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pnnl.goss.core.GossCoreContants;
 import pnnl.goss.core.server.GossDataServices;
 import pnnl.goss.core.server.internal.GossDataServicesImpl;
 import pnnl.goss.core.server.internal.GossRequestHandlerRegistrationImpl;
@@ -92,10 +97,16 @@ public class ServerMain {
     public static void outputConfig(Dictionary dictionary){
 
         Enumeration dictEnumeration = dictionary.keys();
+        boolean hasOne = false;
 
         while(dictEnumeration.hasMoreElements()){
             String element = (String)dictEnumeration.nextElement();
             log.debug("\t"+element+" => "+ dictionary.get(element));
+            hasOne = true;
+        }
+        
+        if (!hasOne){
+        	log.debug("\tNo config elements present");
         }
     }
 
@@ -154,8 +165,29 @@ public class ServerMain {
 
         return options;
     }
-
+    
     @SuppressWarnings("rawtypes")
+	public Dictionary loadProperties(String fileName) {
+    	if (fileName == null){
+    		return null;
+    	}
+    	
+    	boolean exceptionHandled = false;
+    	File file = new File(fileName);
+    	Dictionary dict = new Hashtable();
+    	Properties props = new Properties();
+    	try {
+			props.load(new FileInputStream(file));
+		} catch (IOException e) {
+			exceptionHandled = true;
+		}
+    	if (exceptionHandled){
+    		return null;
+    	}
+     	return props;    	
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void main(String[] args) throws ParseException {
 
         ServerMain serverMain = new ServerMain();
@@ -163,6 +195,7 @@ public class ServerMain {
         String brokerFile = null;
         String coreFile = null;
         String datasourceFile = null;
+        boolean startBroker = false;
 
         //CommandLineParser parser = new PosixParser().parse(options,args);
         CommandLine cmd = null;
@@ -197,19 +230,58 @@ public class ServerMain {
     	    return;
     	}
         
+        Option ops = null;
+    	Dictionary dataSourcesCfg = serverMain.loadProperties(datasourceFile);
+        if (dataSourcesCfg == null){
+        	dataSourcesCfg = new Hashtable();
+        }
         
         
+        Dictionary coreConfig = serverMain.loadProperties(coreFile);
+        if (coreConfig == null){
+        	ops = options.getOption(CMD_CORECFG);
+        	log.error("Invalid "+ops.getArgName() + " path\n\t"+
+					coreFile);
+        	return;
+        }
         
-        //serverMain.attachShutdownHook();
-
+        if (brokerFile != null){
+        	File bf = new File(brokerFile);
+        	if (!bf.exists()){
+        		ops = options.getOption(CMD_ACTIVEMQ);
+        		log.error("Invalid "+ops.getArgName() + " path\n\t"+
+            			brokerFile);
+            	return;
+        	}
+        }
         
-
+        serverMain.attachShutdownHook();
+        
+        log.debug("CORE CONFIGURATION");
+        outputConfig(coreConfig);
+        
+        log.debug("DATASOURCES CONFIGURATION");
+        outputConfig(dataSourcesCfg);
+        
+        GossDataServices dataServices = new GossDataServicesImpl(dataSourcesCfg);
+        GossRequestHandlerRegistrationImpl registrationService = new GossRequestHandlerRegistrationImpl(dataServices);
+        
+        registrationService.addHandlersFromClassPath();
+        
+        if (brokerFile != null){
+        	coreConfig.put(GossCoreContants.PROP_ACTIVEMQ_CONFIG, brokerFile);
+        	startBroker = true;
+        }
+        
+        GridOpticsServer server = new GridOpticsServer(registrationService, 
+        		coreConfig, startBroker);
 
 //        Dictionary dataSourcesConfig = Utilities.loadProperties(PROP_DATASOURCES_CONFIG);
 //        // Replaces the ${..} with values from the goss.properties file.
 //        replacePropertiesFromHome(dataSourcesConfig, "goss.properties");
 //
 //        Dictionary coreConfig = Utilities.loadProperties(PROP_CORE_CONFIG);
+        
 
 //        log.debug("CORE CONFIGURATION");
 //        outputConfig(coreConfig);
