@@ -9,7 +9,7 @@ The GOSS-Server module is available for local testing through your ide or from t
  3. Open a command window to the root of the repository.
  4. execute ./gradlew build (Linux) or gradlew.bat (Windows)
  5. execute ./gradlew installApp (Creates install with libs and executable in build/install/goss-server)
- 6. execute build/install/goss-server/bin/goss-server --coreCfg=build/resources/main/sample-goss-core.properties
+ 6. execute build/install/goss-server/bin/goss-server --coreCfg=build/resources/main/sample-goss-core.properties --activemqCfg=build/resources/main/sample-broker-nosecurity.xml --dataCfg=build/resources/main/sample-datasources.cfg
  7. execute build/install/goss-server/bin/goss-server --help (To get available options)
  
 You should now have the server running on your local system. 
