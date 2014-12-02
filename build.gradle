@@ -12,28 +12,6 @@ version = '0.1.6-SNAPSHOT'
 // Property added by application plugin
 mainClassName = "pnnl.goss.server.ServerMain"
 
-// Configure the project.ext variables.  I am using version numbers
-// here so that they can be in one spot, all together rather than in the
-// dependencies configuration block.
-ext {
-    commonsCliVersion = "1.2"
-
-    gossCoreVersion = '0.1.6-SNAPSHOT'
-    gossPowergridVersion = '0.1.6-SNAPSHOT'
-
-    activemqVersion = '5.10.0'
-    gradleVersion = '2.1'
-    groovyVersion = '2.3.3'
-    ipojoVersion = '1.11.2'
-    jettyVersion = '8.1.14.v20131031'
-    junitVersion = '4.11'
-    mockitoVersion = '1.10.8'
-    slf4jVersion = '1.7.5'
-    spockVersion = '0.7-groovy-2.0'
-    springVersion = '3.1.2.RELEASE'
-    xbeanVersion = "3.8"
-}
-
 // Repository configuration.
 repositories {
     mavenLocal()
