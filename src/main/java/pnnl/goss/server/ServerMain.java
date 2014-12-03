@@ -147,7 +147,7 @@ public class ServerMain {
                 .create("help"));
 
 
-        options.addOption(OptionBuilder.withArgName("datacfg")
+        options.addOption(OptionBuilder.withArgName("dataCfg")
                 .hasArg()
                 .withDescription( "Specifies the datasource configuration file.")
                 .create(CMD_DATACFG));
@@ -157,7 +157,7 @@ public class ServerMain {
                 .withDescription("An activemq broker configuration file.")
                 .create(CMD_ACTIVEMQ));
 
-        options.addOption(OptionBuilder.withArgName("corecfg")
+        options.addOption(OptionBuilder.withArgName("coreCfg")
                 .hasArg()
                 .withDescription("Specifies core configuration parameters.")
                 .create(CMD_CORECFG));
