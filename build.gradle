@@ -64,6 +64,16 @@ buildscript {
     }
 }
 
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Goss Server',
+                    'Implementation-Version': version,
+                    'Main-Class' : mainClassName,
+                    'Class-Path': 'libs/',
+                    'Created-By': 'Pacific Northwest National Laboratory'
+    }
+}
+
 // This task is for creating a wrap script that can simply be
 // downloaded and executed.  The doing of this remindes me
 // allot of virtualenv for python.
