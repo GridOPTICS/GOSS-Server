@@ -40,8 +40,8 @@ dependencies {
     // Both client and server need access to the following dependencies
     compile "pnnl.goss:goss-core:$gossCoreVersion"
     compile "pnnl.goss:goss-core-server:$gossCoreVersion"
-    //compile "pnnl.goss.powergrid:powergrid-common:$gossPowergridVersion"
-    //compile "pnnl.goss.powergrid:powergrid-server:$gossPowergridVersion"
+    compile "pnnl.goss.powergrid:powergrid-common:$gossPowergridVersion"
+    compile "pnnl.goss.powergrid:powergrid-server:$gossPowergridVersion"
     compile "org.apache.felix:org.apache.felix.ipojo:$ipojoVersion"
     compile "org.apache.xbean:xbean-spring:$xbeanVersion"
 
