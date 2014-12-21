@@ -14,4 +14,6 @@ The GOSS-Server module is available for local testing through your ide or from t
  
 You should now have the server running on your local system. In the startup log you should see the lines DEBUG Step: Starting Server Consumer and DEBUG Step: Server Consumer started, this means that it started successfully.
 
+See [Core Server Configuration](Core-Server-Config) in order to build your own custom configuraiton.
+
 
