@@ -224,6 +224,9 @@ public class ServerMain {
             if (cmd.hasOption(CMD_DATACFG)){
                 datasourceFile = cmd.getOptionValue(CMD_DATACFG);
             }
+            else{
+                log.warn("No "+ CMD_DATACFG + " specified.  There will be no datasources!");
+            }
 
         }
         catch( ParseException exp ) {
