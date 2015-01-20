@@ -42,7 +42,6 @@ dependencies {
     compile "pnnl.goss:goss-core-server:$gossCoreVersion"
     //compile "pnnl.goss.powergrid:powergrid-common:$gossPowergridVersion"
     //compile "pnnl.goss.powergrid:powergrid-server:$gossPowergridVersion"
-    compile "org.apache.felix:org.apache.felix.ipojo:$ipojoVersion"
     compile "org.apache.xbean:xbean-spring:$xbeanVersion"
 
     // For testing we are going to use these ubiquitous
